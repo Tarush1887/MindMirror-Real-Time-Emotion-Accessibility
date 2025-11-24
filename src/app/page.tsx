@@ -400,7 +400,7 @@ export default function Page() {
             const h = yMax - yMin;
 
             // Box color based on sentiment
-            if (sentiment.label === "Positive") ctx.strokeStyle = "#10b981";
+            if (sentiment.label === "Positive") ctx.strokeStyle = "#22c55e";
             else if (sentiment.label === "Negative") ctx.strokeStyle = "#ef4444";
             else ctx.strokeStyle = "#eab308";
 
@@ -408,7 +408,7 @@ export default function Page() {
 
             // AR-style emoji bubble above face
             const centerX = xMin + w / 2;
-            const topY = Math.max(20, yMin - 20);
+            const topY = Math.max(28, yMin - 24);
             ctx.font = "28px system-ui";
             ctx.textAlign = "center";
             ctx.fillStyle = "#ffffff";
@@ -416,10 +416,10 @@ export default function Page() {
 
             // Facial landmarks (small dots)
             if (face.keypoints) {
-              ctx.fillStyle = "rgba(59, 130, 246, 0.85)"; // blue
+              ctx.fillStyle = "rgba(56, 189, 248, 0.9)"; // sky
               face.keypoints.forEach((pt: any) => {
                 ctx.beginPath();
-                ctx.arc(pt.x, pt.y, 1.2, 0, Math.PI * 2);
+                ctx.arc(pt.x, pt.y, 1.3, 0, Math.PI * 2);
                 ctx.fill();
               });
             }
@@ -446,7 +446,7 @@ export default function Page() {
         <motion.div
           initial={{ opacity: 0, scale: 0.96, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="p-6 bg-slate-900/80 rounded-2xl w-80 shadow-xl border border-emerald-500/30 backdrop-blur"
+          className="p-6 bg-slate-900/80 rounded-2xl w-80 shadow-xl border border-emerald-500/40 backdrop-blur fade-in"
         >
           <h1 className="text-xl mb-2 text-center font-semibold">
             🧠 MindMirror Login
@@ -501,171 +501,280 @@ export default function Page() {
   const blinkActivity = getBlinkActivity();
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-black text-gray-100">
-      <header className="p-4 flex justify-between items-center bg-slate-950/80 border-b border-slate-800 backdrop-blur">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">🧠</span>
-          <div>
-            <h1 className="font-bold text-lg tracking-wide">MindMirror</h1>
-            <p className="text-xs text-gray-400">
-              Real-Time Emotion Accessibility
+    <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-emerald-950 text-slate-50">
+      <div className="flex min-h-screen">
+        {/* Sidebar (desktop) */}
+        <aside className="hidden lg:flex lg:w-64 flex-col border-r border-emerald-900/40 bg-slate-950/80 backdrop-blur px-5 py-6 space-y-6">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">🧠</span>
+            <div>
+              <h1 className="font-bold text-lg tracking-wide">MindMirror</h1>
+              <p className="text-[11px] text-emerald-300">
+                Emotion Accessibility AI
+              </p>
+            </div>
+          </div>
+
+          <nav className="space-y-2 text-sm">
+            <p className="text-[11px] uppercase tracking-wide text-slate-400">
+              Live
             </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-4 text-xs text-gray-300">
-          <span className="px-2 py-1 rounded-full bg-slate-800/80 border border-slate-700">
-            FPS: <span className="font-semibold">{fps}</span>
-          </span>
-          <button
-            onClick={logout}
-            className="text-sm text-gray-200 hover:text-emerald-400"
-          >
-            Logout
-          </button>
-        </div>
-      </header>
-
-      <main className="p-4 grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-        {/* LEFT: Camera + Captions */}
-        <section className="lg:col-span-2 space-y-4">
-          <div className="relative rounded-2xl overflow-hidden bg-black shadow-2xl border border-slate-800">
-            {/* Video */}
-            <video
-              ref={videoRef}
-              className="w-full h-auto object-cover"
-              autoPlay
-              playsInline
-              muted
-            />
-
-            {/* Canvas overlay */}
-            <canvas
-              ref={canvasRef}
-              className="absolute inset-0 pointer-events-none"
-            />
-
-            {/* Caption + emoji */}
-            <div className="absolute bottom-3 left-3 right-3 bg-black/70 px-3 py-2 rounded-xl text-sm flex items-center gap-3 backdrop-blur border border-slate-700">
-              <span className="text-3xl">{activeEmoji}</span>
-              <span className="truncate">
-                {captions || "Listening… start speaking to see captions."}
-              </span>
-              <span className="ml-auto text-xs text-gray-300">
-                {sentiment.label} ({sentiment.score})
-              </span>
-            </div>
-          </div>
-
-          <div className="flex gap-2 mt-1 flex-wrap">
-            <button
-              onClick={startCamera}
-              className="bg-emerald-600 hover:bg-emerald-700 px-3 py-2 rounded text-sm font-semibold shadow-sm"
-            >
-              Start Camera
+            <button className="w-full text-left px-3 py-2 rounded-xl bg-emerald-600/15 border border-emerald-500/40 text-emerald-100 text-xs font-medium card-hover">
+              Live Session
+              <span className="ml-2 inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
             </button>
-            <button
-              onClick={stopCamera}
-              className="bg-rose-600 hover:bg-rose-700 px-3 py-2 rounded text-sm font-semibold shadow-sm"
-            >
-              Stop Camera
+            <button className="w-full text-left px-3 py-2 rounded-xl bg-slate-900/70 border border-slate-700 text-xs text-slate-300 hover:border-emerald-400/50 transition">
+              Analytics
             </button>
-            <button
-              onClick={saveSession}
-              className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm font-semibold shadow-sm"
-            >
-              Save Session
+            <button className="w-full text-left px-3 py-2 rounded-xl bg-slate-900/70 border border-slate-700 text-xs text-slate-300 hover:border-emerald-400/50 transition">
+              Saved Sessions
             </button>
-            {error && (
-              <span className="text-xs text-red-400 mt-1">{error}</span>
-            )}
-          </div>
+          </nav>
 
-          {/* Smart Stats Panel */}
-          <div className="grid sm:grid-cols-3 gap-3">
-            <div className="bg-slate-900/80 rounded-xl p-3 border border-slate-800">
-              <h3 className="text-xs text-gray-400 mb-1">Smile Score</h3>
-              <p className="text-lg font-semibold text-emerald-400">
-                {smileScore}
-              </p>
-            </div>
-            <div className="bg-slate-900/80 rounded-xl p-3 border border-slate-800">
-              <h3 className="text-xs text-gray-400 mb-1">Shock Detection</h3>
-              <p className="text-lg font-semibold text-amber-400">
-                {shockLevel}
-              </p>
-            </div>
-            <div className="bg-slate-900/80 rounded-xl p-3 border border-slate-800">
-              <h3 className="text-xs text-gray-400 mb-1">Eye Blink Activity</h3>
-              <p className="text-lg font-semibold text-sky-400">
-                {blinkActivity}
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* RIGHT: Timeline + Emoji selector + Sessions */}
-        <aside className="space-y-4">
-          <div className="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
-            <h2 className="font-semibold mb-2 text-sm">Mood Timeline</h2>
-            <div className="h-40">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={history}>
-                  <XAxis dataKey="t" hide />
-                  <YAxis domain={[-10, 10]} />
-                  <Tooltip />
-                  <Line dataKey="s" stroke="#10b981" dot={false} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          <div className="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
-            <h3 className="font-semibold mb-2 text-sm">Emoji Reactions</h3>
-            <div className="grid grid-cols-10 gap-1 text-2xl">
-              {EMOJIS.map((e) => (
-                <button
-                  key={e}
-                  onClick={() => setActiveEmoji(e)}
-                  className={`p-1 rounded ${
-                    activeEmoji === e ? "bg-emerald-700" : "hover:bg-slate-700"
-                  }`}
+          <div className="space-y-2 text-xs">
+            <p className="text-[11px] uppercase tracking-wide text-slate-400">
+              Live Status
+            </p>
+            <div className="bg-slate-900/80 rounded-xl p-3 border border-slate-800 card-hover">
+              <div className="flex justify-between mb-1">
+                <span className="text-slate-300">FPS</span>
+                <span className="text-emerald-400 font-semibold">{fps}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-300">Camera</span>
+                <span
+                  className={
+                    cameraOn ? "text-emerald-400 font-semibold" : "text-slate-500"
+                  }
                 >
-                  {e}
-                </button>
-              ))}
+                  {cameraOn ? "On" : "Off"}
+                </span>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/80 rounded-xl p-3 border border-slate-800 card-hover">
+              <p className="text-[11px] text-slate-400 mb-1">Current Mood</p>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">{activeEmoji}</span>
+                <div>
+                  <p className="text-xs font-semibold">{sentiment.label}</p>
+                  <p className="text-[11px] text-slate-400">
+                    Score: {sentiment.score}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 max-h-64 overflow-y-auto">
-            <h3 className="font-semibold mb-2 text-sm">Recent Sessions</h3>
-            {sessions.length === 0 && (
-              <p className="text-xs text-gray-400">
-                No sessions saved yet. Click “Save Session” to log one.
-              </p>
-            )}
-            <ul className="space-y-2 text-xs">
-              {sessions.map((s) => (
-                <li
-                  key={s.id}
-                  className="border border-slate-800 rounded-lg p-2 bg-slate-950/60"
-                >
-                  <div className="flex justify-between mb-1">
-                    <span className="font-semibold">{s.sentiment}</span>
-                    <span className="text-[10px] text-gray-400">
-                      {s.timestamp}
-                    </span>
-                  </div>
-                  <p className="text-gray-300 line-clamp-2">{s.captions}</p>
-                </li>
-              ))}
-            </ul>
+          <div className="mt-auto text-[11px] text-slate-500">
+            Signed in as
+            <br />
+            <span className="text-slate-200 break-all text-[11px]">
+              {user?.email || "Demo User"}
+            </span>
           </div>
         </aside>
-      </main>
 
-      <footer className="text-center p-4 text-xs text-gray-500 border-t border-slate-800 bg-slate-950/80">
-        © 2025 MindMirror | Next.js · Firebase · TensorFlow.js
-      </footer>
+        {/* Main area (content + mobile header) */}
+        <div className="flex-1 flex flex-col">
+          {/* Mobile header */}
+          <header className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🧠</span>
+              <div>
+                <h1 className="font-bold text-base">MindMirror</h1>
+                <p className="text-[11px] text-emerald-300">
+                  Emotion Accessibility
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="px-2 py-1 rounded-full bg-slate-900 border border-slate-700 text-[11px]">
+                FPS: <span className="font-semibold">{fps}</span>
+              </span>
+              <button
+                onClick={logout}
+                className="text-[11px] text-slate-200 hover:text-emerald-400"
+              >
+                Logout
+              </button>
+            </div>
+          </header>
+
+          {/* Content */}
+          <main className="flex-1 p-4 lg:p-6 grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto w-full">
+            {/* LEFT: Camera + Captions + Smart stats */}
+            <section className="lg:col-span-2 space-y-4 fade-in">
+              <div className="relative rounded-2xl overflow-hidden bg-black shadow-2xl border border-emerald-600/40 card-hover">
+                {/* Video */}
+                <video
+                  ref={videoRef}
+                  className="w-full h-auto object-cover"
+                  autoPlay
+                  playsInline
+                  muted
+                />
+
+                {/* Canvas overlay */}
+                <canvas
+                  ref={canvasRef}
+                  className="absolute inset-0 pointer-events-none"
+                />
+
+                {/* Caption + emoji */}
+                <div className="absolute bottom-3 left-3 right-3 bg-slate-950/80 px-3 py-2 rounded-2xl text-sm flex items-center gap-3 backdrop-blur border border-emerald-500/40 shadow-lg">
+                  <span className="text-3xl">{activeEmoji}</span>
+                  <span className="truncate text-xs sm:text-sm">
+                    {captions || "Listening… start speaking to see captions."}
+                  </span>
+                  <span className="ml-auto text-[10px] sm:text-xs text-emerald-300 whitespace-nowrap">
+                    {sentiment.label} ({sentiment.score})
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex gap-2 mt-1 flex-wrap">
+                <button
+                  onClick={startCamera}
+                  className="btn btn-green text-xs sm:text-sm"
+                >
+                  Start Camera
+                </button>
+                <button
+                  onClick={stopCamera}
+                  className="btn btn-red text-xs sm:text-sm"
+                >
+                  Stop Camera
+                </button>
+                <button
+                  onClick={saveSession}
+                  className="btn btn-blue text-xs sm:text-sm"
+                >
+                  Save Session
+                </button>
+                {error && (
+                  <span className="text-xs text-red-400 mt-1">{error}</span>
+                )}
+              </div>
+
+              {/* Smart Stats Panel */}
+              <div className="grid sm:grid-cols-3 gap-3">
+                <div className="bg-slate-950/80 rounded-xl p-3 border border-slate-800 card-hover">
+                  <h3 className="text-[11px] text-slate-400 mb-1">
+                    Smile Score
+                  </h3>
+                  <p className="text-lg font-semibold text-emerald-400">
+                    {smileScore}
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    Derived from recent speech sentiment.
+                  </p>
+                </div>
+                <div className="bg-slate-950/80 rounded-xl p-3 border border-slate-800 card-hover">
+                  <h3 className="text-[11px] text-slate-400 mb-1">
+                    Shock Detection
+                  </h3>
+                  <p className="text-lg font-semibold text-amber-400">
+                    {shockLevel}
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    Looks for surprise cues in your words.
+                  </p>
+                </div>
+                <div className="bg-slate-950/80 rounded-xl p-3 border border-slate-800 card-hover">
+                  <h3 className="text-[11px] text-slate-400 mb-1">
+                    Eye Blink Activity
+                  </h3>
+                  <p className="text-lg font-semibold text-sky-400">
+                    {blinkActivity}
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    Demo metric for visual engagement.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* RIGHT: Timeline + Emoji selector + Sessions */}
+            <aside className="space-y-4 fade-in">
+              <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 card-hover">
+                <h2 className="font-semibold mb-2 text-sm flex items-center gap-2">
+                  Mood Timeline
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
+                    Live
+                  </span>
+                </h2>
+                <div className="h-40">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={history}>
+                      <XAxis dataKey="t" hide />
+                      <YAxis domain={[-10, 10]} />
+                      <Tooltip />
+                      <Line dataKey="s" stroke="#22c55e" dot={false} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 card-hover">
+                <h3 className="font-semibold mb-2 text-sm">
+                  Emoji Reactions
+                </h3>
+                <div className="grid grid-cols-10 gap-1 text-2xl">
+                  {EMOJIS.map((e) => (
+                    <button
+                      key={e}
+                      onClick={() => setActiveEmoji(e)}
+                      className={`p-1 rounded-lg transition transform hover:scale-110 ${
+                        activeEmoji === e
+                          ? "bg-emerald-500/80 ring-2 ring-emerald-300 shadow-md"
+                          : "hover:bg-slate-800/80"
+                      }`}
+                    >
+                      {e}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 max-h-64 overflow-y-auto card-hover">
+                <h3 className="font-semibold mb-2 text-sm">
+                  Recent Sessions
+                </h3>
+                {sessions.length === 0 && (
+                  <p className="text-xs text-slate-400">
+                    No sessions saved yet. Click <b>Save Session</b> to log one.
+                  </p>
+                )}
+                <ul className="space-y-2 text-xs">
+                  {sessions.map((s) => (
+                    <li
+                      key={s.id}
+                      className="border border-slate-800 rounded-lg p-2 bg-slate-950/60"
+                    >
+                      <div className="flex justify-between mb-1 items-center">
+                        <span className="font-semibold flex items-center gap-1">
+                          {s.sentiment}
+                        </span>
+                        <span className="text-[10px] text-slate-400">
+                          {s.timestamp}
+                        </span>
+                      </div>
+                      <p className="text-slate-200 line-clamp-2">
+                        {s.captions}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </aside>
+          </main>
+
+          <footer className="text-center p-3 text-[11px] text-slate-500 border-t border-slate-800 bg-slate-950/80">
+            © 2025 MindMirror · Built with Next.js · Firebase · TensorFlow.js
+          </footer>
+        </div>
+      </div>
     </div>
   );
 }
