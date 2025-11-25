@@ -25,6 +25,8 @@ import {
   getFirestore,
   collection,
   addDoc,
+  deleteDoc,
+  doc,
   serverTimestamp,
   query,
   where,
@@ -347,6 +349,14 @@ export default function Page() {
       setError("Failed to save session.");
     }
   };
+  const deleteSession = async (sessionId: string) => {
+  try {
+    await deleteDoc(doc(db, "sessions", sessionId));
+    console.log("Session deleted");
+  } catch (error) {
+    console.error("Error deleting session:", error);
+  }
+};
 
   // 🎯 Face overlay + FPS + Heatmap
   useEffect(() => {
@@ -914,6 +924,14 @@ export default function Page() {
                             <span className="text-[10px] text-slate-400">
                               {s.timestamp}
                             </span>
+                            {/* Delete button */}
+                            <button
+                              onClick={() => deleteSession(s.id)}
+                              className="text-red-400 hover:text-red-600 text-xs"
+                              title="Delete Session"
+                            >
+                              Delete
+                            </button>
                           </div>
                           <p className="text-slate-200 text-xs">
                             {s.captions || <i>No transcript captured.</i>}
